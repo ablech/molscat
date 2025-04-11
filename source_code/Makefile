@@ -5,7 +5,7 @@
 #
 # set up directories ==========================================================
 OBJDIR  = .
-EXECDIR = .
+EXECDIR = ../build/bin
 ###############################################################################
 #
 # set flags for linking =======================================================
@@ -229,7 +229,7 @@ USER-PROGS =
 # rules for making executables ================================================
 #
 .PHONY: $(PROGS) $(USER-PROGS) clean
-#$(PROGS) : %: $(EXECDIR)/%
+$(PROGS) : %: $(EXECDIR)/%
 
 $(EXECDIR)/molscat-basic     : $(addprefix $(OBJDIR)/,main1M.o \
                                                       $(CORE_MOL) \
