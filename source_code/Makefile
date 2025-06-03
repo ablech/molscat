@@ -29,7 +29,10 @@ LIBS     = -llapack -lblas
 # set up recipe rules =========================================================
 #
 # set flags for compilation
-COMPILE.f = $(Compiler) -std=legacy -c  -O0 -g
+#COMPILE.f = $(Compiler) -std=legacy -c  -O0 -g
+#COMPILE.f = $(Compiler) -std=legacy -c  -O2
+COMPILE.f = $(Compiler) -std=legacy -c  -O0 -g -mcmodel=large
+#COMPILE.f = $(Compiler) -std=legacy -c  -O2 -mcmodel=large
 LINK.f    = $(Compiler)
 #
 # pattern matching rules for generating object files from source code =========
@@ -195,6 +198,8 @@ POT-ARCO2   = $(POTENL-GP) vstar-dummy.o       vrtp-extpot_1ang.o \
                               extpot-Ar_CO2.o sumleg.o
 POT-MGNH    = $(POTENL-GP) vstar-Mg_NH.o       vrtp-dummy.o
 POT-RGH2    = potenl-Rg_H2.o $(POTUTILS)
+POT-CO2Hev3 = $(POTENL-GP) vstar-dummy.o       vrtp-CO2_He_v3.o
+POT-CO2HeRigidGodardPalluet = $(POTENL-GP) vstar-dummy.o       vrtp-CO2_He_rigid_GodardPalluet.o
 #
 # note that modules must be earlier in dependency lists than object codes
 # that use them because they must be compiled first
@@ -223,13 +228,49 @@ PROGS =     molscat-basic \
             bound-Rg_CO2  \
             field-basic \
             field-Mg_NH   field-Rb2
-USER-PROGS = 
+USER-PROGS = molscat-CO2_He_v3 molscat-CO2_He_rigid_GodardPalluet
+###############################################################################
+#
+# list of exteral dependencies for USER-PROGS =================================
+#
+POTLIBDIR = ../../scatterutils/install/lib
+POTINCLUDEDIR = ../../scatterutils/install/include
+
+LIBS_SELIM = -lselim -lselim_utils -lrkhs_data
+LINK_SELIM = -L$(POTLIBDIR)
+$(OBJDIR)/vrtp-CO2_He_v3.o: vrtp-CO2_He_v3.f
+	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
+
+LIBS_GODARDPALLUET = -lgodardpalluet
+LINK_GODARDPALLUET = -L$(POTLIBDIR)
+$(OBJDIR)/vrtp-CO2_He_rigid_GodardPalluet.o: vrtp-CO2_He_rigid_GodardPalluet.f
+	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
 ###############################################################################
 #
 # rules for making executables ================================================
 #
 .PHONY: $(PROGS) $(USER-PROGS) clean
 $(PROGS) : %: $(EXECDIR)/%
+$(USER-PROGS) : %: $(EXECDIR)/%
+
+
+# User programs ===============================================================
+
+$(EXECDIR)/molscat-CO2_He_v3 : $(addprefix $(OBJDIR)/,main1M.o \
+                                                      $(CORE_MOL) \
+                                                      $(REPLACEABLE) \
+                                                      $(BASE9-UNUSED) \
+                                                      $(POT-CO2Hev3))
+	$(LINK.f) $^ $(LIBS) $(LIBS_SELIM) $(LINK_SELIM) -o $@
+$(EXECDIR)/molscat-CO2_He_rigid_GodardPalluet : $(addprefix $(OBJDIR)/,main1M.o \
+                                                      $(CORE_MOL) \
+                                                      $(REPLACEABLE) \
+                                                      $(BASE9-UNUSED) \
+                                                      $(POT-CO2HeRigidGodardPalluet))
+	$(LINK.f) $^ $(LIBS) $(LIBS_GODARDPALLUET) $(LINK_GODARDPALLUET) -o $@
+
+# Original programs ===========================================================
+
 
 $(EXECDIR)/molscat-basic     : $(addprefix $(OBJDIR)/,main1M.o \
                                                       $(CORE_MOL) \
