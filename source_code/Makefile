@@ -228,7 +228,7 @@ USER-PROGS =
 #
 # rules for making executables ================================================
 #
-.PHONY: $(PROGS) $(USER-PROGS)
+.PHONY: $(PROGS) $(USER-PROGS) clean
 #$(PROGS) : %: $(EXECDIR)/%
 
 $(EXECDIR)/molscat-basic     : $(addprefix $(OBJDIR)/,main1M.o \
@@ -345,3 +345,8 @@ $(EXECDIR)/field-Mg_NH       : $(addprefix $(OBJDIR)/,main1M.o \
                                                       $(BASE9-MGNH) \
                                                       $(POT-MGNH))
 	$(LINK.f) $^ $(LIBS) -o $@
+
+clean:
+	rm -f $(OBJDIR)/*.o 
+	rm -rf *.mod
+	rm -f $(EXECDIR)/*
