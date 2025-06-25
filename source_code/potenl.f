@@ -580,7 +580,7 @@ C  CHECK SYMMETRIES
       IF (MOD(ITYPE,10).NE.9) THEN
       IF (ITYP.EQ.1 .OR. ITYP.EQ.2) THEN
         DO IL=1,MXLAM
-          L=LAM(IL)
+          L=LAM((IL-1)*NPQL+1)
           IF (MOD(L,IHOMO).NE.0) THEN
             WRITE(6,9910) IL,IHOMO,ICNSYM,L
             STOP
