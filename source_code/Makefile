@@ -29,10 +29,7 @@ LIBS     = -llapack -lblas
 # set up recipe rules =========================================================
 #
 # set flags for compilation
-#COMPILE.f = $(Compiler) -std=legacy -c  -O0 -g
-#COMPILE.f = $(Compiler) -std=legacy -c  -O2
 COMPILE.f = $(Compiler) -std=legacy -c  -O0 -g -mcmodel=large
-#COMPILE.f = $(Compiler) -std=legacy -c  -O2 -mcmodel=large
 LINK.f    = $(Compiler)
 #
 # pattern matching rules for generating object files from source code =========
@@ -198,7 +195,9 @@ POT-ARCO2   = $(POTENL-GP) vstar-dummy.o       vrtp-extpot_1ang.o \
                               extpot-Ar_CO2.o sumleg.o
 POT-MGNH    = $(POTENL-GP) vstar-Mg_NH.o       vrtp-dummy.o
 POT-RGH2    = potenl-Rg_H2.o $(POTUTILS)
+POT-CO2Hev1 = $(POTENL-GP) vstar-dummy.o       vrtp-CO2_He_v1.o
 POT-CO2Hev3 = $(POTENL-GP) vstar-dummy.o       vrtp-CO2_He_v3.o
+POT-CO2HeRigidSelim = $(POTENL-GP) vstar-dummy.o       vrtp-CO2_He_rigid_Selim.o
 POT-CO2HeRigidGodardPalluet = $(POTENL-GP) vstar-dummy.o       vrtp-CO2_He_rigid_GodardPalluet.o
 #
 # note that modules must be earlier in dependency lists than object codes
@@ -228,7 +227,8 @@ PROGS =     molscat-basic \
             bound-Rg_CO2  \
             field-basic \
             field-Mg_NH   field-Rb2
-USER-PROGS = molscat-CO2_He_v3 molscat-CO2_He_rigid_GodardPalluet
+USER-PROGS = molscat-CO2_He_rigid_Selim molscat-CO2_He_v1 molscat-CO2_He_v3 \
+             molscat-CO2_He_rigid_GodardPalluet
 ###############################################################################
 #
 # list of exteral dependencies for USER-PROGS =================================
@@ -238,6 +238,10 @@ POTINCLUDEDIR = ../../scatterutils/install/include
 
 LIBS_SELIM = -lselim -lselim_utils -lrkhs_data
 LINK_SELIM = -L$(POTLIBDIR)
+$(OBJDIR)/vrtp-CO2_He_rigid_Selim.o: vrtp-CO2_He_rigid_Selim.f
+	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
+$(OBJDIR)/vrtp-CO2_He_v1.o: vrtp-CO2_He_v1.f
+	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
 $(OBJDIR)/vrtp-CO2_He_v3.o: vrtp-CO2_He_v3.f
 	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
 
@@ -256,12 +260,27 @@ $(USER-PROGS) : %: $(EXECDIR)/%
 
 # User programs ===============================================================
 
+# Programs using potential by Selim
+$(EXECDIR)/molscat-CO2_He_rigid_Selim : $(addprefix $(OBJDIR)/,main1M.o \
+                                                      $(CORE_MOL) \
+                                                      $(REPLACEABLE) \
+                                                      $(BASE9-UNUSED) \
+                                                      $(POT-CO2HeRigidSelim))
+	$(LINK.f) $^ $(LIBS) $(LIBS_SELIM) $(LINK_SELIM) -o $@
+$(EXECDIR)/molscat-CO2_He_v1 : $(addprefix $(OBJDIR)/,main1M.o \
+                                                      $(CORE_MOL) \
+                                                      $(REPLACEABLE) \
+                                                      $(BASE9-UNUSED) \
+                                                      $(POT-CO2Hev1))
+	$(LINK.f) $^ $(LIBS) $(LIBS_SELIM) $(LINK_SELIM) -o $@
 $(EXECDIR)/molscat-CO2_He_v3 : $(addprefix $(OBJDIR)/,main1M.o \
                                                       $(CORE_MOL) \
                                                       $(REPLACEABLE) \
                                                       $(BASE9-UNUSED) \
                                                       $(POT-CO2Hev3))
 	$(LINK.f) $^ $(LIBS) $(LIBS_SELIM) $(LINK_SELIM) -o $@
+
+# Programs using potential by GodardPalluet
 $(EXECDIR)/molscat-CO2_He_rigid_GodardPalluet : $(addprefix $(OBJDIR)/,main1M.o \
                                                       $(CORE_MOL) \
                                                       $(REPLACEABLE) \
