@@ -253,9 +253,13 @@ $(OBJDIR)/vrtp-CO2_He_rigid_GodardPalluet.o: vrtp-CO2_He_rigid_GodardPalluet.f
 #
 # rules for making executables ================================================
 #
-.PHONY: $(PROGS) $(USER-PROGS) clean
+.PHONY: $(PROGS) $(USER-PROGS) clean quasilama
 $(PROGS) : %: $(EXECDIR)/%
 $(USER-PROGS) : %: $(EXECDIR)/%
+
+.DEFAULT_GOAL = quasilama
+
+quasilama: molscat-basic $(USER-PROGS)
 
 
 # User programs ===============================================================
