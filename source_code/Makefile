@@ -29,7 +29,15 @@ LIBS     = -llapack -lblas
 # set up recipe rules =========================================================
 #
 # set flags for compilation
-COMPILE.f = $(Compiler) -std=legacy -c  -O0 -g
+#COMPILE.f = $(Compiler) -std=legacy -c  -O0 -g
+#COMPILE.f = $(Compiler) -std=legacy -c  -O2
+#COMPILE.f = $(Compiler) -std=legacy -c  -O3
+COMPILE.f = $(Compiler) -std=legacy -c  -O0 -g -mcmodel=large
+#COMPILE.f = $(Compiler) -std=legacy -c  -O2 -mcmodel=large
+COMPILE.f = $(Compiler) -std=legacy -c  -O3 -mcmodel=large
+#COMPILE.f = $(Compiler) -std=legacy -c  -O0 -mcmodel=large
+#COMPILE2.f = $(Compiler) -std=legacy -c  -O3 -mcmodel=large -fcheck=array-temps -Wall -Wextra
+COMPILE2.f = $(COMPILE.f)
 LINK.f    = $(Compiler)
 #
 # pattern matching rules for generating object files from source code =========
@@ -38,6 +46,9 @@ $(OBJDIR)/%.o : %.f
 	$(COMPILE.f) $< -o $@
 $(OBJDIR)/%.o: %.f90
 	$(COMPILE.f) $< -o $@
+$(OBJDIR)/couple.o : couple.f
+	@gfortran --version
+	$(COMPILE2.f) $< -o $@
 #
 # specific recipe for object files that have other dependencies ===============
 #
