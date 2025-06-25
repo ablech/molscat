@@ -51,6 +51,19 @@ $(OBJDIR)/pot_data_Tiemann-%.o: pot_data_Tiemann-%.f pot_data_tiemann.mod
 #
 # lists of the object files that depend on a particular module ================
 #
+# memory module ===============================================================
+#
+MEMORY_DEPS = base.o bdctrl.o bd.driver.o chkstr.o cntrct.o couple.o cpl21.o \
+			  cpl22.o cpl23.o cpl25. cpl3.o cpl4.o dasize.o fld.driver.o \
+			  header.o iosclc.o iosdrv.o main1M.o mol.driver.o prbr.o \
+			  restrt.o scctrl.o set4.o set6c.o sig6.o sproc.o sumlam.o
+(addprefix \$(OBJDIR)/,$(MEMORY_DEPS)): memory.mod
+#
+memory.mod:         memory_module.f
+	@true
+
+main1M.o: memory_module.o
+#
 # angles module ===============================================================
 #
 ANGLES_DEPS = iosbin.o iosout.o potenl.o vrtp-extpot_1ang.o \
@@ -125,7 +138,7 @@ sizes.mod:         sizes_module.f
 # Set aliases to shorten dependency lists =====================================
 #
 MODULES =   physical_constants_module.o sizes_module.o efvs_module.o \
-            potential_module.o basis_data_module.o angles_module.o
+            potential_module.o basis_data_module.o angles_module.o memory_module.o
 #MODULES =   physical_constants_2014.o sizes_module.o efvs_module.o \
 #            potential_module.o basis_data_module.o angles_module.o
 CLOCK =     gclock.o gdate.o

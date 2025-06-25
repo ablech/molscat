@@ -44,6 +44,7 @@ C           ITYP=9 INTERFACE ADDED BY JMH 15 AUG 94
 C  PREVIOUS REVISION DATES 1 FEB 1994 (SG); 3 JAN 1994 (JMH).
 C  -----------------------------------------------------------------
 C
+      USE memory, ONLY: MX,IXNEXT,NIPR,IDUMMY,X
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       SAVE
       SAVE NPTS
@@ -62,8 +63,8 @@ C  ----- ALSO, "X" MUST BE ADDED TO THE "SAVE" STATEMENT ABOVE -----
 C     PARAMETER (MXX=30000)
 C     DIMENSION X(MXX)
 C  ----- NEXT TWO STATEMENTS ARE FOR /MEMORY/ MECHANISM-----
-      DIMENSION X(1)
-      COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X
+C     DIMENSION X(1)
+C     COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X
 C
 C  -----------------------------------------------------------------
 C  * SPECIFICATION STATEMENTS:

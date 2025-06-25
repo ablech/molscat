@@ -5,6 +5,7 @@
      4                DGVL, QNAME)
 C  Copyright (C) 2022 J. M. Hutson & C. R. Le Sueur
 C  Distributed under the GNU General Public License, version 3
+      USE memory, ONLY: MX,IXNEXT,NIPR,IDUMMY,X
       USE efvs, ONLY: MAPEFV, NEFV
       USE potential, ONLY: NCONST, NDGVL, NEXTMS, NEXTRA, NRSQ, NVLBLK
       USE basis_data, ONLY: A, ALPHAE, B, BE, C, DE, DJ, DJK, DK, DT,
@@ -102,7 +103,7 @@ cINOLLS include 'all/pvmdat1.f'
 cINOLLS include 'all/pvmdat.f'
 C
 C  DYNAMIC STORAGE COMMON BLOCK ...
-      COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
+C     COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
       COMMON /VLFLAG/ IVLFL
 C
       COMMON /PRBASE/ ITYPX,NQN,NSTATE,MVALUE,IPTY,MPLMIN
