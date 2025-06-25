@@ -49,6 +49,8 @@ C  COUPLING FOR ATOM + RIGID LINEAR ROTOR
 C  THIS VERSION BY JM Hutson, JUNE 93, TO REDUCE NON-VECTORIZABLE CODE
 C
  8001 IF (IVLFL.NE.0) GOTO 9999
+      print *, '### ### ###'
+      print *, '### start coupling matrix'
 
       NZERO=0
       DO 1511 LL=1,MXLAM
@@ -117,10 +119,44 @@ C
               INDJ=ITJ+(JROW-JMIN)/2
               INDL=ITL+(L(IROW)-LMIN)/2
               IND6=IT6+JROW-JMIN6
+              print*, '---- I = ', I
+              print*, X(650:655)
+              print*, X(656:660)
+              write(*, *) 'VL(I) = ', VL(I)
               VL(I)=SQRT(Z(JCOL)*Z(JROW)*Z(L(ICOL))*Z(L(IROW)))
      2              *X(INDJ)*X(INDL)*X(IND6)
+              write(*, *) 'idx z = ', I, JCOL, JROW, L(ICOL), L(IROW)
+C  1111        FORMAT('  I3   I4   I4   I4   I4')
+              write(*, *) 'Z = ', Z(JCOL),Z(JROW),Z(L(ICOL)),Z(L(IROW))
+      write(*,*)'sqrt(z)=',SQRT(Z(JCOL)*Z(JROW)*Z(L(ICOL))*Z(L(IROW)))
+              write(*, *) 'idx x = ', INDJ, INDL, IND6
+              write(*, *) 'X = ', X(INDJ), X(INDL), X(IND6)
+      write(*,*)'X1*X2=',X(INDJ)*X(INDL)
+      write(*,*)'X1*X2*X3=',X(INDJ)*X(INDL)*X(IND6)
+      write(*,*)'X3*X2*X1=',X(IND6)*X(INDL)*X(INDJ)
+      write(*,*)'X2*X3*X1=',X(INDL)*X(IND6)*X(INDJ)
+      write(*,*) X(INDJ),X(INDL),X(IND6),INDJ,INDL,IND6
+      write(*,*)'X1*X2*X3=',X(ITJ+(JROW-JMIN)/2)
+     +                     *X(ITL+(L(IROW)-LMIN)/2)
+     +                     *X(IT6+JROW-JMIN6)
+      write(*,*)'X(657)*X(658)*X(659)=',X(657)*X(658)*X(659)
+      write(*,*) ' --- indices:'
+      write(*,*) INDJ, ITJ, JROW, JMIN, (JROW-JMIN)/2
+      write(*,*) INDL, ITL, IROW, L(IROW), LMIN, (L(IROW)-LMIN)/2
+      write(*,*) IND6, IT6, JROW, JMIN6
+      write(*,*)'X1*X2*X3=',X(ITJ)*X(ITL)*X(IT6)
+
+
+      AAA = X(INDJ)
+      BBB = X(INDL)
+      CCC = X(IND6)
+      write(*,*) 'A, B, C = ', AAA, BBB, CCC
+      write(*,*) 'A*B=',AAA*BBB
+      write(*,*) 'A*B*C=',AAA*BBB*CCC
+      write(*,*) 'C*B*A=',CCC*BBB*AAA
               IF (LODD(JCOL+JROW+JTOT)) VL(I)=-VL(I)
               IF (VL(I).NE.0.D0) NNZ=NNZ+1
+              write(*, *) 'VL(I) = ', VL(I)
             ENDIF
           ENDIF
  1501     I=I+NHAM
@@ -134,6 +170,9 @@ C
  1511 CONTINUE
       IF (NZERO.GT.0 .AND. IPRINT.GE.10 .AND. IPRINT.LT.14)
      1  WRITE(6,620) JTOT,NZERO
+      print *, '### done coupling matrix'
+      print *, '### NZERO=', NZERO, 'NNZ=', NNZ
+      print *, '### ### ###'
       RETURN
 C
 C  COUPLING FOR VIBROTOR - ATOM MAKING USE OF IV() (S Green, JAN 94)
