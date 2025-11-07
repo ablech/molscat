@@ -3,6 +3,7 @@
      2                  P, EP2RU, CM2RU, RSCALE, MXLAM, NHAM, IPRINT)
 C  Copyright (C) 2022 J. M. Hutson & C. R. Le Sueur
 C  Distributed under the GNU General Public License, version 3
+      USE memory, ONLY: MX,IXNEXT,NIPR,IDUMMY,X
       USE potential, ONLY: NCONST, NRSQ, VCONST
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
 C
@@ -23,7 +24,7 @@ C  ON EXIT:  M IS THE SIZE OF THE NEW BASIS
 C            NHAM IS MXLAM+2
 C
       DIMENSION W(N,N),T(N,N),VL(2),IV(2),EINT(N),CENT(N),P(MXLAM)
-      COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
+C     COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
       COMMON /VLSAVE/ IVLU
       COMMON /VLFLAG/ IVLFL
 C

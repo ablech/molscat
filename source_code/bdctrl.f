@@ -5,6 +5,7 @@
      4                  IMIN, IPRINT)
 C  Copyright (C) 2022 J. M. Hutson & C. R. Le Sueur
 C  Distributed under the GNU General Public License, version 3
+      USE memory, ONLY: MX,IXNEXT,NIPR,IDUMMY,X
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
 C
 C  ---------------------------------------------------------------
@@ -33,7 +34,7 @@ C  DIMENSION STATEMENTS FOR ARGUMENT LIST
       DIMENSION KREC(2)
 C
 C  DYNAMIC MEMORY COMMON BLOCK
-      COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
+C     COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
 C
       DIMENSION STPSEG(3),CAYSEG(3),TOLSEG(3),DRSEG(3),IPRSEG(3),
      1          RBSEG(3),RESEG(3),NSTEPS(3),POWSEG(3)

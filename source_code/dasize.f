@@ -1,6 +1,7 @@
       SUBROUTINE DASIZE(ILSU,MXREC)
 C  Copyright (C) 2019 J. M. Hutson & C. R. Le Sueur
 C  Distributed under the GNU General Public License, version 3
+      USE memory, ONLY: MX,IXNEXT,NIPR,IDUMMY,X
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       SAVE MXUSED,IX,R,S
       PARAMETER (NREC=50000)
@@ -11,7 +12,7 @@ C  Distributed under the GNU General Public License, version 3
 C
 C  DYNAMIC STORAGE COMMON BLOCK ...
 C  NEEDED FOR NIPR; PREVIOUSLY PASSED IN COMMON /INTPAC/
-      COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
+C     COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
 C
       DATA MAXREC/NREC/
 C

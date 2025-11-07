@@ -4,6 +4,7 @@
      3                  RMIN,IPRINT)
 C  Copyright (C) 2022 J. M. Hutson & C. R. Le Sueur
 C  Distributed under the GNU General Public License, version 3
+      USE memory, ONLY: MX,IXNEXT,NIPR,IDUMMY,X
       USE efvs, ONLY: EFV, IEFVST, MXEFV, NEFV, NEFVP
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
 C
@@ -33,7 +34,7 @@ C  COMMON BLOCK FOR CONTROL OF PROPAGATION SEGMENTS
      2                IPROPS,IPROPL,NSEG
 
 C  DYNAMIC STORAGE COMMON BLOCK ...
-      COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
+C     COMMON /MEMORY/ MX,IXNEXT,NIPR,IDUMMY,X(1)
 C     EQUIVALENCE(PAR(1),RMNINT)
 C
       IF (ISCRU.EQ.0) RETURN
