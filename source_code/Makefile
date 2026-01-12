@@ -311,14 +311,142 @@ endef
 $(foreach prog,$(PROGS),$(eval $(call PROGS_template,$(prog))))
 
 
+#
+# =============================================================================
+# QUASILAMA DEPENDENCIES AND PROGRAMS
+# =============================================================================
+#
+
+#
+# Where to find libraries and include files for the potentials =================
+# (needs to be the install directory of the scatterutils package)
+#
+POTLIBDIR = ../../scatterutils/install/lib
+POTINCLUDEDIR = ../../scatterutils/install/include
+
+
+# ------------------------------------------------------------------------------
+# CO2-He collisions with potentials from Taha Selim and Gerrit Groenenboom
+#
+USER_LIBS1 = -lselim -lselim_utils -lrkhs_data
+USER_LINK1 = -L$(POTLIBDIR)
+
+$(OBJDIR)/vrtp-CO2_He_rigid_Selim.o: vrtp-CO2_He_rigid_Selim.f
+	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
+$(OBJDIR)/vrtp-CO2_He_v1.o: vrtp-CO2_He_v1.f
+	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
+$(OBJDIR)/vrtp-CO2_He_v3.o: vrtp-CO2_He_v3.f
+	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
+
+POT-CO2HeRigidSelim = $(POTENL-GP) vstar-dummy.o vrtp-CO2_He_rigid_Selim.o
+POT-CO2Hev1         = $(POTENL-GP) vstar-dummy.o vrtp-CO2_He_v1.o
+POT-CO2Hev3         = $(POTENL-GP) vstar-dummy.o vrtp-CO2_He_v3.o
+
+molscat-CO2_He_rigid_Selim_OBJS = $(CORE_MOL) $(REPLACEABLE) $(BASE9-UNUSED) $(POT-CO2HeRigidSelim)
+molscat-CO2_He_v1_OBJS          = $(CORE_MOL) $(REPLACEABLE) $(BASE9-UNUSED) $(POT-CO2Hev1)
+molscat-CO2_He_v3_OBJS          = $(CORE_MOL) $(REPLACEABLE) $(BASE9-UNUSED) $(POT-CO2Hev3)
+
+USER-PROGS1 = molscat-CO2_He_rigid_Selim \
+              molscat-CO2_He_v1 \
+              molscat-CO2_He_v3 \
+
+# rule to make executables
+#
+$(foreach prog,$(USER-PROGS1),$(eval $(call PROGS_template,$(prog))))
+$(USER-PROGS1): | $(EXECDIR)
+	$(LINK.f) $^ $(LIBS) $(USER_LIBS1) $(USER_LINK1) -o $(EXECDIR)/$@
+	@rm -f $(addprefix $(OBJDIR)/,$($(@F)-remove)) 2>&1 > /dev/null
+
+QUASILAMA-PROGS += $(USER-PROGS1)
+
+
+# ------------------------------------------------------------------------------
+# CO2-He collisions with potentials from Godard-Palluet paper
+#
+USER_LIBS2 = -lgodardpalluet
+USER_LINK2 = -L$(POTLIBDIR)
+
+$(OBJDIR)/vrtp-CO2_He_rigid_GodardPalluet.o: vrtp-CO2_He_rigid_GodardPalluet.f
+	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
+
+POT-CO2HeRigidGodardPalluet = $(POTENL-GP) vstar-dummy.o vrtp-CO2_He_rigid_GodardPalluet.o
+
+molscat-CO2_He_rigid_GodardPalluet_OBJS = $(CORE_MOL) $(REPLACEABLE) $(BASE9-UNUSED) $(POT-CO2HeRigidGodardPalluet)
+
+USER-PROGS2 = molscat-CO2_He_rigid_GodardPalluet 
+
+#
+# rule to make executables
+#
+$(foreach prog,$(USER-PROGS2),$(eval $(call PROGS_template,$(prog))))
+$(USER-PROGS2): | $(EXECDIR)
+	$(LINK.f) $^ $(LIBS) $(USER_LIBS2) $(USER_LINK2) -o $(EXECDIR)/$@
+	@rm -f $(addprefix $(OBJDIR)/,$($(@F)-remove)) 2>&1 > /dev/null
+
+QUASILAMA-PROGS += $(USER-PROGS2)
+
+
+# # ------------------------------------------------------------------------------
+# # TEMPLATE FOR NEW INTERACTION POTENTIALS
+# #
+# # To add an executable for a new potential, copy this block, uncomment it
+# # and follow the instructions in the comments below.
+# #
+# # Generally, all expressions in curly brackets need to be replaced, 
+# # e.g., {your_library_name} by selim
+# # 
+# # Each block introducing a new set of executables is numerated.
+# # {xxx} should in the following be replaced by the number of the block.
+# #
+# # External libraries used by the executables.
+# # Adjust the names according to your needs (or leave empty)
+# # Here, {path_to_your_libraries} is probably $(POTLIBDIR)
+# USER_LIBS{xxx} = -l{your_first_lib} -l{your_second_lib}
+# USER_LINK{xxx} = -L$(POTLIBDIR) -L{path_to_additional_libraries}
+# 
+# # Your versions of the VRTP routine, probably one for each executable.
+# # Adjust the names according to your needs
+# $(OBJDIR)/vrtp-{name_for_first_exe}.o: vrtp-{name_for_first_exe}.f
+# 	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
+# $(OBJDIR)/vrtp-{name_for_second_exe}.o: vrtp-{name_for_second_exe}.f
+# 	$(COMPILE.f) $< -o $@ -I$(POTINCLUDEDIR)
+# 
+# # Dependencies for potential routines
+# # Replace names
+# POT-{abbrev_for_first_exe} = $(POTENL-GP) vstar-dummy.o vrtp-{name_for_first_exe}.o
+# POT-{abbrev_for_second_exe} = $(POTENL-GP) vstar-dummy.o vrtp-{name_for_second_exe}.o
+# 
+# # Dependencies for executables
+# # Replace names
+# molscat-{name_for_first_exe}_OBJS  = $(CORE_MOL) $(REPLACEABLE) $(BASE9-UNUSED) $(POT-{abbrev_for_first_exe})
+# molscat-{name_for_second_exe}_OBJS = $(CORE_MOL) $(REPLACEABLE) $(BASE9-UNUSED) $(POT-{abbrev_for_second_exe})
+# 
+# # List of executables
+# # Replace {xxx} and names
+# USER-PROGS{xxx} = molscat-{name_for_first_exe} \
+#                   molscat-{name_for_second_exe}
+# 
+# # rule to make executables
+# # Replace {xxx}
+# #
+# $(foreach prog,$(USER-PROGS{xxx}),$(eval $(call PROGS_template,$(prog))))
+# $(USER-PROGS{xxx}): | $(EXECDIR)
+# 	$(LINK.f) $^ $(LIBS) $(USER_LIBS{xxx}) $(USER_LINK{xxx}) -o $(EXECDIR)/$@
+# 	@rm -f $(addprefix $(OBJDIR)/,$($(@F)-remove)) 2>&1 > /dev/null
+# 
+# QUASILAMA-PROGS += $(USER-PROGS{xxx})
+
+
 ############################## Section 5 #####################################
 #
 # Set up rules
 #
 
-.PHONY: all clean
+.PHONY: all quasilama
 
-all: $(PROGS)
+all: $(PROGS) $(QUASILAMA-PROGS)
+
+quasilama: molscat-basic $(QUASILAMA-PROGS)
 
 #
 # Rule to make any executable
