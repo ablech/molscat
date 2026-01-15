@@ -11,7 +11,7 @@ endif
 
 LIBS = -llapack -lblas
 ifeq ($(Compiler),gfortran)
-  FFLAGS = -g --std=legacy
+  FFLAGS = -O3 --std=legacy
 endif
 
 ifneq ($(MOLSCAT_LIBS),)
@@ -40,7 +40,7 @@ COMPILE.f = $(Compiler) -c
 # can change it by setting the environment variable MOLSCAT_EXECUTABLE
 #
 ifeq ($(MOLSCAT_EXECUTABLE),)
-  .DEFAULT_GOAL := molscat-basic
+  .DEFAULT_GOAL := quasilama
 else
   .DEFAULT_GOAL := $(MOLSCAT_EXECUTABLE)
 endif
